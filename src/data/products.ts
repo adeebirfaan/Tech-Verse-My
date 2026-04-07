@@ -182,7 +182,7 @@ export const products: Product[] = [
     websiteUrl: "edulaluan.netlify.app",
     androidUrl: "",
     iosUrl: "",
-    logo: "",
+    logo: "/logos/edulaluan.png",
     featured: false,
   },
   {
@@ -199,7 +199,7 @@ export const products: Product[] = [
     androidUrl:
       "https://play.google.com/store/apps/details?id=com.taufiknayan.qadhatracker&pcampaignid=web_share",
     iosUrl: "",
-    logo: "",
+    logo: "/logos/myqadha.png",
     featured: false,
   },
   {
@@ -215,7 +215,7 @@ export const products: Product[] = [
     websiteUrl: "https://masjidmalaysia.my/",
     androidUrl: "",
     iosUrl: "",
-    logo: "",
+    logo: "/logos/masjidmalaysia.png",
     featured: false,
   },
   {
@@ -231,7 +231,7 @@ export const products: Product[] = [
     websiteUrl: "https://lensup.pics/",
     androidUrl: "",
     iosUrl: "",
-    logo: "",
+    logo: "/logos/lensup-pics.png",
     featured: false,
   },
   {
@@ -247,7 +247,7 @@ export const products: Product[] = [
     websiteUrl: "https://sewahub.my/",
     androidUrl: "",
     iosUrl: "",
-    logo: "",
+    logo: "/logos/sewahub.png",
     featured: false,
   },
   {
