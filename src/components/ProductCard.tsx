@@ -1,25 +1,30 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Product } from "@/data/products";
-import { ExternalLink, Download, Globe, MessageCircle } from "lucide-react";
+import { ExternalLink, Download, Globe, MessageCircle, ChevronDown, ChevronUp } from "lucide-react";
 import Image from "next/image";
 
 export function ProductCard({ product }: { product: Product }) {
+  const [isExpanded, setIsExpanded] = useState(false);
+
   const getInitials = (name: string) => {
     return name.slice(0, 2).toUpperCase();
   };
 
   return (
     <motion.div
+      layout
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
       whileHover={{ y: -5 }}
-      transition={{ duration: 0.3 }}
+      transition={{ duration: 0.3, layout: { duration: 0.3, ease: "easeInOut" } }}
       className="glass-panel p-6 rounded-2xl flex flex-col h-full group"
+      style={{ borderRadius: "1rem" }}
     >
-      <div className="flex items-start gap-4 mb-4">
+      <motion.div layout="position" className="flex items-start gap-4 mb-4">
         <div className="w-16 h-16 rounded-xl flex-shrink-0 bg-secondary flex items-center justify-center overflow-hidden relative shadow-sm border border-border">
           {product.logo ? (
             <img 
@@ -49,13 +54,29 @@ export function ProductCard({ product }: { product: Product }) {
             </span>
           </div>
         </div>
-      </div>
+      </motion.div>
 
-      <p className="text-sm text-muted-foreground flex-grow mb-6 line-clamp-3">
-        {product.description}
-      </p>
+      <motion.div layout="position" className="flex-grow mb-6 flex flex-col items-start gap-2">
+        <motion.p 
+          layout="position"
+          className={`text-sm text-muted-foreground ${!isExpanded ? 'line-clamp-3' : ''}`}
+        >
+          {product.description}
+        </motion.p>
+        
+        {product.description && product.description.length > 90 && (
+          <motion.button 
+            layout="position"
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="text-[11px] font-medium text-foreground/60 hover:text-foreground flex items-center gap-1 transition-colors mt-1"
+          >
+            {isExpanded ? "Show less" : "Read more"}
+            {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+          </motion.button>
+        )}
+      </motion.div>
 
-      <div className="mt-auto space-y-4">
+      <motion.div layout="position" className="mt-auto space-y-4">
         {/* Creator Info */}
         <div className="pt-4 border-t border-border">
           <div className="flex items-center justify-between mb-0.5">
@@ -116,7 +137,7 @@ export function ProductCard({ product }: { product: Product }) {
             </a>
           )}
         </div>
-      </div>
+      </motion.div>
     </motion.div>
   );
 }
