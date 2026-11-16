@@ -3,12 +3,14 @@
 import { useState, useMemo } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Hero } from "@/components/Hero";
+import { Featured } from "@/components/Featured";
+import { CategoryIndex } from "@/components/CategoryIndex";
 import { SearchFilterBar } from "@/components/SearchFilterBar";
 import { ProductCard } from "@/components/ProductCard";
 import { AboutSection } from "@/components/AboutSection";
 import { Footer } from "@/components/Footer";
+import { Scribble } from "@/components/Scribble";
 import { products } from "@/data/products";
-import { AnimatePresence, motion } from "framer-motion";
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -22,11 +24,11 @@ export default function Home() {
 
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
-      const matchesSearch = 
+      const matchesSearch =
         product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         product.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
         product.creatorName.toLowerCase().includes(searchQuery.toLowerCase());
-      
+
       const matchesCategory = selectedCategory === "All" || product.category === selectedCategory;
       const matchesType = selectedType === "All" || product.type === selectedType;
 
@@ -34,22 +36,30 @@ export default function Home() {
     });
   }, [searchQuery, selectedCategory, selectedType]);
 
+  const pickCategory = (category: string) => {
+    setSelectedCategory(selectedCategory === category ? "All" : category);
+    document.getElementById("explore")?.scrollIntoView({ block: "start" });
+  };
+
   return (
     <>
+      <a className="skip" href="#main">Skip to content</a>
       <Navbar />
-      <main className="flex-grow">
+      <main id="main">
         <Hero />
-        
-        <section id="explore" className="py-20 bg-background relative min-h-screen">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">Explore Directory</h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto">
-                Discover the best local applications and websites created by talented Malaysians.
+        <Featured />
+        <CategoryIndex selectedCategory={selectedCategory} onPick={pickCategory} />
+
+        <section id="explore" className="section directory" aria-labelledby="explore-title">
+          <div className="container">
+            <div className="section__head">
+              <h2 id="explore-title" className="section__title">Search all {products.length} builds</h2>
+              <p className="directory__count" role="status">
+                Showing {filteredProducts.length} of {products.length}
               </p>
             </div>
 
-            <SearchFilterBar 
+            <SearchFilterBar
               searchQuery={searchQuery}
               setSearchQuery={setSearchQuery}
               selectedCategory={selectedCategory}
@@ -59,43 +69,32 @@ export default function Home() {
               categories={categories}
             />
 
-            <div className="mt-12">
-              <AnimatePresence mode="popLayout">
-                {filteredProducts.length > 0 ? (
-                  <motion.div 
-                    layout
-                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-                  >
-                    {filteredProducts.map((product) => (
-                      <ProductCard key={product.id} product={product} />
-                    ))}
-                  </motion.div>
-                ) : (
-                  <motion.div 
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="text-center py-20 glass-panel rounded-3xl"
-                  >
-                    <div className="text-6xl mb-4">🔍</div>
-                    <h3 className="text-2xl font-bold mb-2">No products found</h3>
-                    <p className="text-muted-foreground mb-6">
-                      We couldn't find any items matching your current filters.
-                    </p>
-                    <button 
-                      onClick={() => {
-                        setSearchQuery("");
-                        setSelectedCategory("All");
-                        setSelectedType("All");
-                      }}
-                      className="px-6 py-2 rounded-lg bg-foreground text-background font-medium hover:opacity-90 transition-opacity"
-                    >
-                      Reset Filters
-                    </button>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
+            {filteredProducts.length > 0 ? (
+              <div className="directory__grid">
+                {filteredProducts.map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
+            ) : (
+              <div className="empty">
+                <Scribble kind="spark" className="empty__mark" />
+                <h3 className="empty__title">No products found</h3>
+                <p className="empty__text">
+                  We couldn&apos;t find any items matching your current filters.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearchQuery("");
+                    setSelectedCategory("All");
+                    setSelectedType("All");
+                  }}
+                  className="btn"
+                >
+                  Reset filters
+                </button>
+              </div>
+            )}
           </div>
         </section>
 

@@ -1,7 +1,6 @@
 "use client";
 
-import { Search } from "lucide-react";
-import { ProductType } from "@/data/products";
+import { Search, ChevronDown } from "lucide-react";
 
 interface Props {
   searchQuery: string;
@@ -23,25 +22,26 @@ export function SearchFilterBar({
   categories,
 }: Props) {
   return (
-    <div className="w-full max-w-5xl mx-auto space-y-4 mb-10 z-20 relative">
-      <div className="flex flex-col md:flex-row gap-4">
-        {/* Search */}
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5" />
-          <input
-            type="text"
-            placeholder="Search by name, creator, or description..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-3 rounded-xl bg-background border border-border focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-shadow transition-colors"
-          />
-        </div>
+    <div className="filters">
+      <label className="field field--search">
+        <span className="visually-hidden">Search</span>
+        <Search size={18} aria-hidden="true" className="field__icon" />
+        <input
+          type="search"
+          name="q"
+          autoComplete="off"
+          placeholder="Search by name, creator, or description…"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+      </label>
 
-        {/* Categories Dropdown */}
+      <label className="field field--select">
+        <span className="visually-hidden">Category</span>
         <select
+          name="category"
           value={selectedCategory}
           onChange={(e) => setSelectedCategory(e.target.value)}
-          className="px-4 py-3 rounded-xl bg-background border border-border focus:outline-none focus:ring-2 focus:ring-purple-500/50 appearance-none min-w-[180px]"
         >
           <option value="All">All Categories</option>
           {categories.map((cat) => (
@@ -50,19 +50,17 @@ export function SearchFilterBar({
             </option>
           ))}
         </select>
-      </div>
+        <ChevronDown size={18} aria-hidden="true" className="field__chev" />
+      </label>
 
-      {/* Type Toggle Chips */}
-      <div className="flex flex-wrap gap-2">
+      <div className="seg" role="group" aria-label="Type">
         {["All", "App", "Website"].map((type) => (
           <button
             key={type}
+            type="button"
+            aria-pressed={selectedType === type}
             onClick={() => setSelectedType(type)}
-            className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors border ${
-              selectedType === type
-                ? "bg-foreground text-background border-foreground"
-                : "bg-secondary text-muted-foreground border-transparent hover:border-border hover:bg-secondary/50"
-            }`}
+            className="seg__btn"
           >
             {type}
           </button>

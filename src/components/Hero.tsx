@@ -1,51 +1,87 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useRef } from "react";
+import Link from "next/link";
+import { products } from "@/data/products";
+import { logoSrc, primaryUrl } from "@/lib/logo";
+import { useTilt } from "@/lib/useTilt";
+import { Scribble } from "./Scribble";
+
+const SUBMIT_URL = "/submit";
+
+// Depth per tile, in steps of 8px, so the board reads as a raised surface, not a flat sheet.
+const DEPTH = [1, 2, 0, 1, 0, 2, 1, 2, 2, 0, 2, 1, 1, 2, 0];
 
 export function Hero() {
-  return (
-    <section id="home" className="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden">
-      {/* Background Glows */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-500/20 dark:bg-blue-500/10 rounded-full blur-[100px] pointer-events-none" />
-      <div className="absolute top-1/2 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-purple-500/20 dark:bg-purple-500/10 rounded-full blur-[100px] pointer-events-none" />
+  const stage = useRef<HTMLDivElement>(null);
+  const board = useRef<HTMLDivElement>(null);
+  useTilt(stage, board, 7);
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <span className="inline-block py-1 px-3 rounded-full bg-secondary text-sm font-medium border text-muted-foreground mb-6">
-            Supporting Malaysian Creators 🇲🇾
-          </span>
-          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6">
-            <span className="block">Tech Verse My</span>
-            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500">
-              Discover Local Innovation
-            </span>
-          </h1>
-          <p className="max-w-2xl mx-auto text-lg md:text-xl text-muted-foreground mb-10">
-            A curated showcase of Malaysian-made apps and websites. 
-            Explore the digital products built by our local independent builders and startups.
+  // 15 tiles plus the "yours next?" tile fill the 4 x 4 board.
+  const withLogos = products.filter((p) => p.logo).slice(0, 15);
+  const kerisik = products.find((p) => p.slug === "kerisik-app");
+
+  return (
+    <section id="home" className="hero">
+      <div className="container hero__grid">
+        <div className="hero__copy">
+          <h1 className="hero__title">Apps and websites made in Malaysia</h1>
+          <p className="hero__lede">
+            {products.length} local builds, each listed with the person who made it.
           </p>
-          
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <a 
-              href="#explore"
-              className="w-full sm:w-auto px-8 py-3 rounded-full bg-foreground text-background font-medium hover:scale-105 transition-transform"
-            >
-              Explore Local Products
-            </a>
-            <a 
-              href="https://forms.gle/t72ELQ5x94RauXot5"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full sm:w-auto px-8 py-3 rounded-full bg-secondary border text-foreground font-medium hover:bg-secondary/80 transition-colors"
-            >
-              Submit Your Product
-            </a>
+          <div className="hero__actions">
+            <a href="#explore" className="btn">Explore local products</a>
+            <Link href={SUBMIT_URL} className="btn btn--quiet">
+              Submit your product
+            </Link>
           </div>
-        </motion.div>
+        </div>
+
+        <div className="hero__stage" ref={stage}>
+          <p className="hand hero__note">
+            every tile opens<br />the real app
+            <Scribble kind="arrow" className="hero__note-arrow" />
+          </p>
+
+          <div className="board" ref={board}>
+            <ul className="board__grid" aria-label="Products in the directory">
+              {withLogos.map((p, i) => (
+                <li key={p.id} className="tile" style={{ ["--z" as string]: DEPTH[i % DEPTH.length] }}>
+                  <a
+                    href={primaryUrl(p)}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="tile__face"
+                    aria-label={`${p.name}, by ${p.creatorName}`}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={logoSrc(p)} alt="" width={256} height={256} />
+                  </a>
+                  <span className="tile__name hand" aria-hidden="true">{p.name}</span>
+                </li>
+              ))}
+              <li className="tile tile--yours" style={{ ["--z" as string]: 2 }}>
+                <Link href={SUBMIT_URL} className="tile__face" aria-label="Submit your product">
+                  <span className="tile__plus" aria-hidden="true">+</span>
+                </Link>
+                <span className="tile__name hand" aria-hidden="true">yours next?</span>
+                <Scribble kind="circle" className="tile__ring" />
+              </li>
+            </ul>
+
+            {kerisik && (
+              <div className="board__card">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={logoSrc(kerisik)} alt="" width={40} height={40} />
+                <div>
+                  <p className="board__card-name">{kerisik.name}</p>
+                  <p className="board__card-line">Keeps your recipes and writes the shopping list.</p>
+                  <p className="board__card-by">by {kerisik.creatorName}</p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </section>
   );

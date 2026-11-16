@@ -1,4 +1,4 @@
-# Tech Verse My
+# Techverse MY
 
 A curated showcase platform for local Malaysian-made apps and websites. Built with Next.js (App Router), Tailwind CSS v4, and Framer Motion. This project is configured to statically export, making it perfect for rapid deployment to Cloudflare Pages.
 
