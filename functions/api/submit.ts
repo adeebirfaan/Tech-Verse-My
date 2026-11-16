@@ -67,7 +67,8 @@ function logoType(bytes: Uint8Array): { ext: string; mime: string } | null {
 export const onRequestPost = async (context: Context): Promise<Response> => {
   const { request, env } = context;
   if (!env.DB) {
-    return json(503, { ok: false, error: "Submissions are not set up on this server yet." });
+    // The binding name is safe to show and makes a missing binding easy to spot.
+    return json(503, { ok: false, error: "Submissions are not set up on this server yet.", missing: "DB" });
   }
 
   let form: FormData;
