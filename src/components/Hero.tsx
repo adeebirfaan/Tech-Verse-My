@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import Link from "next/link";
-import { products } from "@/data/products";
+import { useProducts } from "@/lib/products-context";
 import { logoSrc, primaryUrl } from "@/lib/logo";
 import { useTilt } from "@/lib/useTilt";
 import { Scribble } from "./Scribble";
@@ -16,6 +16,7 @@ export function Hero() {
   const stage = useRef<HTMLDivElement>(null);
   const board = useRef<HTMLDivElement>(null);
   useTilt(stage, board, 7);
+  const products = useProducts();
 
   // 15 tiles plus the "yours next?" tile fill the 4 x 4 board.
   const withLogos = products.filter((p) => p.logo).slice(0, 15);

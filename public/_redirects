@@ -1,3 +1,4 @@
 # Cloudflare Pages rules (copied into out/ by next build).
 # Next 16's client asks for the flat prefetch file; the static export writes it in a folder.
 /submit/__next.submit.__PAGE__.txt  /submit/__next.submit/__PAGE__.txt  200
+/admin/__next.admin.__PAGE__.txt  /admin/__next.admin/__PAGE__.txt  200

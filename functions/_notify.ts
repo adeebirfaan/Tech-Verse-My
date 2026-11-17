@@ -24,6 +24,8 @@ export interface Submission {
   ios: string;
   logo: { bytes: ArrayBuffer; ext: string; mime: string } | null;
   logoKey: string | null;
+  /** Link to the admin page, where the submission can be approved. */
+  adminUrl: string;
 }
 
 const esc = (s: string) =>
@@ -74,8 +76,9 @@ export async function notifyNewSubmission(env: NotifyEnv, s: Submission): Promis
 <table role="presentation" style="width:100%;border-collapse:collapse;font-size:15px;line-height:1.5">
 ${rows.map(([k, v]) => `<tr><td style="padding:8px 12px 8px 0;border-top:1px solid #eeebe6;color:#6b665e;vertical-align:top;white-space:nowrap">${k}</td><td style="padding:8px 0;border-top:1px solid #eeebe6;word-break:break-word">${v}</td></tr>`).join("\n")}
 </table>
-<p style="margin:20px 0 6px;font-size:14px;color:#6b665e">Approve it in D1 once it's in products.ts:</p>
-<pre style="margin:0;padding:12px;background:#f1efea;border-radius:8px;font-size:13px;white-space:pre-wrap;word-break:break-all">${esc(approve)}</pre>
+<p style="margin:24px 0 0"><a href="${esc(s.adminUrl)}" style="display:inline-block;padding:12px 20px;background:#1e1b17;color:#fdfcfa;border-radius:10px;text-decoration:none;font-weight:600">Review in admin</a></p>
+<p style="margin:16px 0 6px;font-size:13px;color:#6b665e">Or approve it from the D1 Console:</p>
+<pre style="margin:0;padding:12px;background:#f1efea;border-radius:8px;font-size:12px;white-space:pre-wrap;word-break:break-all">${esc(approve)}</pre>
 <p style="margin:16px 0 0;font-size:13px;color:#6b665e">Reply to this email to write to the maker.</p>
 </div></body></html>`;
 
@@ -90,8 +93,8 @@ ${rows.map(([k, v]) => `<tr><td style="padding:8px 12px 8px 0;border-top:1px sol
     ...links.map(([label, url]) => `${label}: ${url}`),
     `Logo: ${logoLine(s)}`,
     "",
-    "Approve it in D1 once it's in products.ts:",
-    approve,
+    `Review in admin: ${s.adminUrl}`,
+    `Or approve it from the D1 Console: ${approve}`,
   ].join("\n");
 
   const body: Record<string, unknown> = {

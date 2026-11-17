@@ -88,6 +88,8 @@
   --color-field-ink-2: oklch(86% 0.04 262);
   --color-tile: oklch(97% 0.004 90);
   --shadow-lift: 0 22px 40px -18px oklch(5% 0.02 262 / 0.7);
+  --color-success: oklch(74% 0.13 150);
+  --color-error: oklch(71% 0.16 27);
 }
 @media (max-width: 60rem) { :root { --gutter: 24px; --section-gap-s: 80px; --section-gap: 96px; --section-gap-l: 120px; } }
 @media (max-width: 40rem) { :root { --gutter: 16px; --section-gap-s: 56px; --section-gap: 72px; --section-gap-l: 96px; --gap-columns: 16px; } }

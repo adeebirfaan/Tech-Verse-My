@@ -10,9 +10,18 @@ import { ProductCard } from "@/components/ProductCard";
 import { AboutSection } from "@/components/AboutSection";
 import { Footer } from "@/components/Footer";
 import { Scribble } from "@/components/Scribble";
-import { products } from "@/data/products";
+import { ProductsProvider, useProducts } from "@/lib/products-context";
 
 export default function Home() {
+  return (
+    <ProductsProvider>
+      <Directory />
+    </ProductsProvider>
+  );
+}
+
+function Directory() {
+  const products = useProducts();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedType, setSelectedType] = useState<string | "All">("All");
@@ -20,7 +29,7 @@ export default function Home() {
   const categories = useMemo(() => {
     const cats = new Set(products.map(p => p.category));
     return Array.from(cats).sort();
-  }, []);
+  }, [products]);
 
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
@@ -34,7 +43,7 @@ export default function Home() {
 
       return matchesSearch && matchesCategory && matchesType;
     });
-  }, [searchQuery, selectedCategory, selectedType]);
+  }, [products, searchQuery, selectedCategory, selectedType]);
 
   const pickCategory = (category: string) => {
     setSelectedCategory(selectedCategory === category ? "All" : category);

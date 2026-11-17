@@ -1,6 +1,6 @@
 # Submissions
 
-The `/submit` page posts to a Cloudflare Pages Function, `functions/api/submit.ts`. The function saves each submission to a D1 database and the logo, if one was uploaded, to an R2 bucket. Until both are bound, the form shows "Submissions are not set up on this server yet." and nothing is saved.
+The `/submit` page posts to a Cloudflare Pages Function, `functions/api/submit.ts`, and you review submissions at `/admin`. The function saves each submission to a D1 database and the logo, if one was uploaded, to an R2 bucket. Until both are bound, the form shows "Submissions are not set up on this server yet." and nothing is saved.
 
 ## One-time setup in Cloudflare
 
@@ -59,14 +59,26 @@ ORDER BY created_at DESC;
 
 Logos are in R2 → `techverse-logos`, under `submissions/<id>.png|jpg|webp`, where `<id>` is the submission's `id`.
 
-## Approving a listing
+## Admin page: approving submissions
 
-1. Add the product to `src/data/products.ts`. Put its logo in `public/logos/` and make the 256px WebP copy in `public/logos/sm/`.
-2. Mark it done:
-   ```sql
-   UPDATE submissions SET status = 'approved' WHERE id = '<id>';
-   ```
-   Use `'rejected'` for ones you turn down.
+Go to `/admin` (for example https://tech-verse-my.pages.dev/admin) and sign in with the admin password. Submissions are under Pending, Approved and Rejected. For each one you can fix the name, description, category, type, Threads handle and links, and see the card as it will look on the site.
+
+- **Approve** puts it in the directory straight away: no code change or redeploy. The homepage loads approved submissions from `/api/listings`, and their logos from `/api/logo/<id>`.
+- **Reject** keeps it out of the directory. You can still approve it later from the Rejected tab.
+- **Take off the site** moves an approved listing back to Pending.
+- **Delete** removes the submission and its logo for good.
+
+To write to a maker, reply to their notification email, or click their address on the admin card.
+
+### Set the admin password (once)
+
+In Workers & Pages → `tech-verse-my` → Settings → Variables and secrets, add `ADMIN_PASSWORD` for Production as a **Secret** (Encrypt). Use a long, unique password, ideally 16 or more characters from a password manager. Then redeploy. Until it's set, `/admin` says it isn't set up and every admin request is refused.
+
+Signing in lasts 7 days. Changing the password signs every device out.
+
+### Moving a listing into the code (optional)
+
+Approved submissions live in D1. To make one permanent in `src/data/products.ts` (for example, to feature it on the homepage), add it there, then delete it in the admin page so it doesn't show twice.
 
 ## Testing locally
 

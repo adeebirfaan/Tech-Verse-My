@@ -1,6 +1,6 @@
 "use client";
 
-import { products } from "@/data/products";
+import { useProducts } from "@/lib/products-context";
 import { Scribble } from "./Scribble";
 
 interface Props {
@@ -9,6 +9,7 @@ interface Props {
 }
 
 export function CategoryIndex({ selectedCategory, onPick }: Props) {
+  const products = useProducts();
   const counts = products.reduce<Record<string, number>>((acc, p) => {
     acc[p.category] = (acc[p.category] ?? 0) + 1;
     return acc;
